@@ -1,9 +1,10 @@
 # Dockerfile for rundeck
 # https://github.com/jjethwa/rundeck
 
-FROM debian:stretch
+#FROM debian:stretch
+FROM alpine:3.6
 
-MAINTAINER Jordan Jethwa
+MAINTAINER Maximilian Mayer
 
 ENV SERVER_URL=https://localhost:4443 \
     RUNDECK_STORAGE_PROVIDER=file \
@@ -14,35 +15,39 @@ ENV SERVER_URL=https://localhost:4443 \
     KEYSTORE_PASS=adminadmin \
     TRUSTSTORE_PASS=adminadmin
 
-RUN export DEBIAN_FRONTEND=noninteractive && \
-    echo "deb http://ftp.debian.org/debian stretch-backports main" >> /etc/apt/sources.list && \
-    apt-get -qq update && \
-    apt-get -qqy install -t stretch-backports --no-install-recommends bash openjdk-8-jre-headless ca-certificates-java supervisor procps sudo ca-certificates openssh-client mysql-server mysql-client pwgen curl git uuid-runtime parallel && \
-    cd /tmp/ && \
-    curl -Lo /tmp/rundeck.deb http://dl.bintray.com/rundeck/rundeck-deb/rundeck-2.10.0-1-GA.deb && \
-    echo '977021067f875e96076679d54d26570b6dfd5405eb9b8cf72a067c41a24b159d  rundeck.deb' > /tmp/rundeck.sig && \
-    shasum -a256 -c /tmp/rundeck.sig && \
-    curl -Lo /tmp/rundeck-cli.deb https://github.com/rundeck/rundeck-cli/releases/download/v1.0.19/rundeck-cli_1.0.19-1_all.deb && \
-    echo 'e6d3a3bab96fa09d2cb0941a8c5d7156294c002909377b2918ed189f8797cb2c  rundeck-cli.deb' > /tmp/rundeck-cli.sig && \
-    shasum -a256 -c /tmp/rundeck-cli.sig && \
-    cd - && \
-    dpkg -i /tmp/rundeck*.deb && rm /tmp/rundeck*.deb && \
-    chown rundeck:rundeck /tmp/rundeck && \
-    mkdir -p /var/lib/rundeck/.ssh && \
-    chown rundeck:rundeck /var/lib/rundeck/.ssh && \
-    sed -i "s/export RDECK_JVM=\"/export RDECK_JVM=\"\${RDECK_JVM} /" /etc/rundeck/profile && \
-    curl -Lo /var/lib/rundeck/libext/rundeck-slack-incoming-webhook-plugin-0.6.jar https://github.com/higanworks/rundeck-slack-incoming-webhook-plugin/releases/download/v0.6.dev/rundeck-slack-incoming-webhook-plugin-0.6.jar && \
-    echo 'd23b31ec4791dff1a7051f1f012725f20a1e3e9f85f64a874115e46df77e00b5  rundeck-slack-incoming-webhook-plugin-0.6.jar' > /tmp/rundeck-slack-plugin.sig && \
-    cd /var/lib/rundeck/libext/ && \
-    shasum -a256 -c /tmp/rundeck-slack-plugin.sig && \
-    cd - && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk update && \
+		apt install openjdk8-jre curl
 
-ADD content/ /
-RUN chmod u+x /opt/run && \
-    mkdir -p /var/log/supervisor && mkdir -p /opt/supervisor && \
-    chmod u+x /opt/supervisor/rundeck && chmod u+x /opt/supervisor/mysql_supervisor
+RUN curl -Lo /tmp/rundeck-launcher-2.10.0.jar  http://dl.bintray.com/rundeck/rundeck-maven/rundeck-launcher-2.10.0.jar && curl -Lo /tmp/rundeck-cli-1.0.21.jar https://github.com/rundeck/rundeck-cli/releases/download/v1.0.21/rundeck-cli-1.0.21-all.jar
+#RUN export DEBIAN_FRONTEND=noninteractive && \
+#    echo "deb http://ftp.debian.org/debian stretch-backports main" >> /etc/apt/sources.list && \
+#    apt-get -qq update && \
+#    apt-get -qqy install -t stretch-backports --no-install-recommends bash openjdk-8-jre-headless ca-certificates-java supervisor procps sudo ca-certificates openssh-client mysql-server mysql-client pwgen curl git uuid-runtime parallel && \
+#    cd /tmp/ && \
+#    curl -Lo /tmp/rundeck.deb http://dl.bintray.com/rundeck/rundeck-deb/rundeck-2.10.0-1-GA.deb && \
+#    echo '977021067f875e96076679d54d26570b6dfd5405eb9b8cf72a067c41a24b159d  rundeck.deb' > /tmp/rundeck.sig && \
+#    shasum -a256 -c /tmp/rundeck.sig && \
+#    curl -Lo /tmp/rundeck-cli.deb https://github.com/rundeck/rundeck-cli/releases/download/v1.0.19/rundeck-cli_1.0.19-1_all.deb && \
+#    echo 'e6d3a3bab96fa09d2cb0941a8c5d7156294c002909377b2918ed189f8797cb2c  rundeck-cli.deb' > /tmp/rundeck-cli.sig && \
+#    shasum -a256 -c /tmp/rundeck-cli.sig && \
+#    cd - && \
+#    dpkg -i /tmp/rundeck*.deb && rm /tmp/rundeck*.deb && \
+#    chown rundeck:rundeck /tmp/rundeck && \
+#    mkdir -p /var/lib/rundeck/.ssh && \
+#    chown rundeck:rundeck /var/lib/rundeck/.ssh && \
+#    sed -i "s/export RDECK_JVM=\"/export RDECK_JVM=\"\${RDECK_JVM} /" /etc/rundeck/profile && \
+#    curl -Lo /var/lib/rundeck/libext/rundeck-slack-incoming-webhook-plugin-0.6.jar https://github.com/higanworks/rundeck-slack-incoming-webhook-plugin/releases/download/v0.6.dev/rundeck-slack-incoming-webhook-plugin-0.6.jar && \
+#    echo 'd23b31ec4791dff1a7051f1f012725f20a1e3e9f85f64a874115e46df77e00b5  rundeck-slack-incoming-webhook-plugin-0.6.jar' > /tmp/rundeck-slack-plugin.sig && \
+#    cd /var/lib/rundeck/libext/ && \
+#    shasum -a256 -c /tmp/rundeck-slack-plugin.sig && \
+#    cd - && \
+#    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/*
+#
+#ADD content/ /
+#RUN chmod u+x /opt/run && \
+#    mkdir -p /var/log/supervisor && mkdir -p /opt/supervisor && \
+#    chmod u+x /opt/supervisor/rundeck && chmod u+x /opt/supervisor/mysql_supervisor
 
 EXPOSE 4440 4443
 
