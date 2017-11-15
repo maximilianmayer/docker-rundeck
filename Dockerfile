@@ -1,10 +1,9 @@
 # Dockerfile for rundeck
-# https://github.com/jjethwa/rundeck
+# https://github.com/
 
-#FROM debian:stretch
 FROM alpine:3.6
 
-MAINTAINER Maximilian Mayer
+LABEL maintainer="Maximilian Mayer <mayer.maximilian@gmail.com>"
 
 ENV SERVER_URL=https://localhost:4443 \
     RUNDECK_STORAGE_PROVIDER=file \
@@ -16,9 +15,17 @@ ENV SERVER_URL=https://localhost:4443 \
     TRUSTSTORE_PASS=adminadmin
 
 RUN apk update && \
-		apt install openjdk8-jre curl
+		apk add openjdk8-jre curl && \
+		mkdir -p /opt/rundeck/bin
 
-RUN curl -Lo /tmp/rundeck-launcher-2.10.0.jar  http://dl.bintray.com/rundeck/rundeck-maven/rundeck-launcher-2.10.0.jar && curl -Lo /tmp/rundeck-cli-1.0.21.jar https://github.com/rundeck/rundeck-cli/releases/download/v1.0.21/rundeck-cli-1.0.21-all.jar
+RUN curl -sLo /opt/rundeck/bin/rundeck-launcher-2.10.0.jar http://dl.bintray.com/rundeck/rundeck-maven/rundeck-launcher-2.10.0.jar && \
+		curl -sLo /opt/rundeck/bin/rundeck-cli-1.0.21.jar https://github.com/rundeck/rundeck-cli/releases/download/v1.0.21/rundeck-cli-1.0.21-all.jar
+
+# prep
+#RUN chown rundeck:rundeck /tmp/rundeck && \
+#    mkdir -p /var/lib/rundeck/.ssh && \
+#    chown rundeck:rundeck /var/lib/rundeck/.ssh && \
+#    sed -i "s/export RDECK_JVM=\"/export RDECK_JVM=\"\${RDECK_JVM} /" /etc/rundeck/profile
 #RUN export DEBIAN_FRONTEND=noninteractive && \
 #    echo "deb http://ftp.debian.org/debian stretch-backports main" >> /etc/apt/sources.list && \
 #    apt-get -qq update && \
@@ -49,8 +56,12 @@ RUN curl -Lo /tmp/rundeck-launcher-2.10.0.jar  http://dl.bintray.com/rundeck/run
 #    mkdir -p /var/log/supervisor && mkdir -p /opt/supervisor && \
 #    chmod u+x /opt/supervisor/rundeck && chmod u+x /opt/supervisor/mysql_supervisor
 
+
 EXPOSE 4440 4443
 
 VOLUME  ["/etc/rundeck", "/var/rundeck", "/var/lib/rundeck", "/var/lib/mysql", "/var/log/rundeck", "/opt/rundeck-plugins", "/var/lib/rundeck/logs", "/var/lib/rundeck/var/storage"]
+# run as rundeck user
+#USER rundeck
 
-ENTRYPOINT ["/opt/run"]
+ENTRYPOINT ["java"]
+CMD ["-jar", "/opt/rundeck/bin/rundeck-launcher-2.10.0.jar"]
