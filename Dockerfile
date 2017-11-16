@@ -22,7 +22,7 @@ RUN curl -sLo /opt/rundeck/bin/rundeck-launcher-2.10.0.jar http://dl.bintray.com
 		curl -sLo /opt/rundeck/bin/rundeck-cli-1.0.21.jar https://github.com/rundeck/rundeck-cli/releases/download/v1.0.21/rundeck-cli-1.0.21-all.jar
 
 # prep
-#RUN chown rundeck:rundeck /tmp/rundeck && \
+#RUN chown rundeck:rundeck /tmp/rundeck 
 #    mkdir -p /var/lib/rundeck/.ssh && \
 #    chown rundeck:rundeck /var/lib/rundeck/.ssh && \
 #    sed -i "s/export RDECK_JVM=\"/export RDECK_JVM=\"\${RDECK_JVM} /" /etc/rundeck/profile
@@ -63,5 +63,6 @@ VOLUME  ["/etc/rundeck", "/var/rundeck", "/var/lib/rundeck", "/var/lib/mysql", "
 # run as rundeck user
 #USER rundeck
 
-ENTRYPOINT ["java"]
-CMD ["-jar", "/opt/rundeck/bin/rundeck-launcher-2.10.0.jar"]
+#ENTRYPOINT ["/usr/bin/java"]
+ENTRYPOINT ["./start.sh"]
+#CMD ["-XX:MaxPermSize=256m", "-Xmx1024m", "-jar", "/opt/rundeck/bin/rundeck-launcher-2.10.0.jar", "-c" , "/etc/rundeck"]
