@@ -51,11 +51,12 @@ RUN curl -sLo /opt/rundeck/bin/rundeck-launcher-2.10.0.jar http://dl.bintray.com
 #    apt-get clean && \
 #    rm -rf /var/lib/apt/lists/*
 #
-#ADD content/ /
-#RUN chmod u+x /opt/run && \
-#    mkdir -p /var/log/supervisor && mkdir -p /opt/supervisor && \
-#    chmod u+x /opt/supervisor/rundeck && chmod u+x /opt/supervisor/mysql_supervisor
+ADD content/ /
+RUN chmod u+x /opt/run && \
+    mkdir -p /var/log/supervisor && mkdir -p /opt/supervisor && \
+    chmod u+x /opt/supervisor/rundeck && chmod u+x /opt/supervisor/mysql_supervisor
 
+ADD ./start.sh .
 
 EXPOSE 4440 4443
 
@@ -64,5 +65,5 @@ VOLUME  ["/etc/rundeck", "/var/rundeck", "/var/lib/rundeck", "/var/lib/mysql", "
 #USER rundeck
 
 #ENTRYPOINT ["/usr/bin/java"]
-ENTRYPOINT ["./start.sh"]
+ENTRYPOINT ./start.sh
 #CMD ["-XX:MaxPermSize=256m", "-Xmx1024m", "-jar", "/opt/rundeck/bin/rundeck-launcher-2.10.0.jar", "-c" , "/etc/rundeck"]
