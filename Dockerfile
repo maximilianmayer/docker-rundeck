@@ -4,7 +4,7 @@
 FROM alpine:3.6
 
 LABEL maintainer="Maximilian Mayer <mayer.maximilian@gmail.com>"
-LABEL version="0.1.5"
+LABEL version="0.1.6"
 
 ENV SERVER_URL=https://localhost:4443 \
     RUNDECK_STORAGE_PROVIDER=file \
@@ -19,8 +19,8 @@ RUN apk update --no-cache && \
 		apk add --no-cache openjdk8-jre curl && \
 		mkdir -p /opt/rundeck/bin
 
-RUN curl -sLo /opt/rundeck/bin/rundeck-launcher-2.10.0.jar http://dl.bintray.com/rundeck/rundeck-maven/rundeck-launcher-2.10.0.jar && \
-		curl -sLo /opt/rundeck/bin/rundeck-cli-1.0.21.jar https://github.com/rundeck/rundeck-cli/releases/download/v1.0.21/rundeck-cli-1.0.21-all.jar
+RUN curl -sLo /opt/rundeck/bin/rundeck-launcher.jar http://dl.bintray.com/rundeck/rundeck-maven/rundeck-launcher-2.10.2.jar && \
+		curl -sLo /opt/rundeck/bin/rundeck-cli.jar https://github.com/rundeck/rundeck-cli/releases/download/v1.0.21/rundeck-cli-1.0.21-all.jar
 
 COPY content/ /
 

@@ -15,7 +15,7 @@
 	-Xmx2048m \
 	-Xms256m \
 	-XX:MaxMetaspaceSize=256m\
-	-jar /opt/rundeck/bin/rundeck-launcher-2.10.0.jar \
+	-jar /opt/rundeck/bin/rundeck-launcher.jar \
 	-c /etc/rundeck
 #/usr/bin/java -XX:MaxPermSize=256m -Xmx1024m -jar /opt/rundeck/bin/rundeck-launcher-2.10.0.jar -c /etc/rundeck
 
