@@ -4,7 +4,7 @@
 FROM openjdk:8-jre-alpine
 
 LABEL maintainer="Maximilian Mayer <mayer.maximilian@gmail.com>"
-LABEL version="0.1.7"
+LABEL version="2.10.6"
 
 ENV SERVER_URL=https://localhost:4443 \
     RUNDECK_STORAGE_PROVIDER=file \
@@ -13,16 +13,14 @@ ENV SERVER_URL=https://localhost:4443 \
     LOGIN_MODULE=RDpropertyfilelogin \
     JAAS_CONF_FILE=jaas-loginmodule.conf \
     KEYSTORE_PASS=adminadmin \
-    TRUSTSTORE_PASS=adminadmin\
-		RUNDECK_VERSION=2.10.2\
-		RUNDECKCLI_VERSION=1.0.21
+    TRUSTSTORE_PASS=adminadmin
 
 RUN apk update --no-cache && \
 		apk add --no-cache curl && \
 		mkdir -p /opt/rundeck/bin
 
-RUN curl -sLo /opt/rundeck/bin/rundeck-launcher.jar http://dl.bintray.com/rundeck/rundeck-maven/rundeck-launcher-2.10.2.jar && \
-		curl -sLo /opt/rundeck/bin/rundeck-cli.jar https://github.com/rundeck/rundeck-cli/releases/download/v1.0.21/rundeck-cli-1.0.21-all.jar
+RUN curl -sLo /opt/rundeck/bin/rundeck-launcher.jar http://download.rundeck.org/jar/rundeck-launcher-2.10.6.jar && \
+		curl -sLo /opt/rundeck/bin/rundeck-cli.jar https://github.com/rundeck/rundeck-cli/releases/download/v1.0.22/rundeck-cli-1.0.22-all.jar
 
 COPY content/ /
 
